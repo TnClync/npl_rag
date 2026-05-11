@@ -4,13 +4,14 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
+from app.config.settings import APP_NAME
 from app.api.routes import healthy
 
 load_dotenv()
 
 # ✅ FastAPI instance (QUAN TRỌNG)
 app = FastAPI(
-    title=os.getenv("APP_NAME", "RAG API"),
+    title= APP_NAME,
     debug=os.getenv("DEBUG", "False") == "True"
 )
 

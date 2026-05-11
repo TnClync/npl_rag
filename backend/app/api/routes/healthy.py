@@ -11,4 +11,4 @@ async def health_check():
         "status": "ok",
         "message": "API is running",
         "timestamp": datetime.utcnow().isoformat()
-    }
+    }  
