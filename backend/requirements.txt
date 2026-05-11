@@ -1,0 +1,78 @@
+# =========================
+# FASTAPI
+# =========================
+fastapi
+uvicorn[standard]
+python-multipart
+
+# =========================
+# LANGCHAIN
+# =========================
+langchain
+langchain-community
+langchain-core
+langchain-huggingface
+
+# =========================
+# TRANSFORMERS
+# =========================
+transformers
+peft
+sentencepiece
+
+# =========================
+# TORCH CPU
+# =========================
+torch
+torchvision
+torchaudio
+
+# =========================
+# VECTOR DATABASE
+# =========================
+chromadb
+
+# =========================
+# EMBEDDINGS
+# =========================
+sentence-transformers
+
+# =========================
+# DOCUMENT LOADERS
+# =========================
+pypdf
+python-docx
+unstructured
+
+# =========================
+# TEXT / TOKENIZER
+# =========================
+tiktoken
+
+# =========================
+# ENVIRONMENT
+# =========================
+python-dotenv
+
+# =========================
+# API / HTTP
+# =========================
+requests
+httpx
+
+# =========================
+# STREAMING
+# =========================
+websockets
+sse-starlette
+
+# =========================
+# DATA
+# =========================
+numpy
+pandas
+
+# =========================
+# LOGGING
+# =========================
+loguru
