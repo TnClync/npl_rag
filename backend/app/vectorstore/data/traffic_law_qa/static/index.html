@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trợ Lý Luật Giao Thông — So sánh 4 cấu hình</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:       #c62828;
+      --red-light: #ef5350;
+      --gold:      #f9a825;
+      --green:     #43a047;
+      --blue:      #1976d2;
+      --purple:    #7b1fa2;
+      --bg:        #0f1117;
+      --surface:   #1a1d27;
+      --surface2:  #22263a;
+      --border:    #2e3250;
+      --text:      #e8eaf0;
+      --text-dim:  #8892b0;
+      --radius:    12px;
+
+      /* màu nhãn cho từng cấu hình */
+      --col-A: #1976d2;
+      --col-B: #2e7d32;
+      --col-C: #6a1b9a;
+      --col-D: #e65100;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: linear-gradient(135deg, var(--red) 0%, #8b0000 100%);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: sticky; top: 0; z-index: 20;
+      box-shadow: 0 2px 16px rgba(0,0,0,.6);
+    }
+    .flag { font-size: 2rem; line-height: 1; }
+    header h1 { font-size: 1.05rem; font-weight: 700; }
+    header p  { font-size: .72rem; opacity: .8; margin-top: 2px; }
+    .badge {
+      margin-left: auto;
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 20px; padding: 4px 12px;
+      font-size: .68rem; font-weight: 700; letter-spacing: .6px;
+    }
+
+    /* ── INPUT SECTION ── */
+    .input-section {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    #question {
+      flex: 1;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      padding: 10px 14px;
+      font-size: .9rem;
+      resize: none;
+      max-height: 120px;
+      min-height: 44px;
+      line-height: 1.5;
+      outline: none;
+      font-family: inherit;
+      transition: border-color .2s;
+    }
+    #question:focus { border-color: var(--red-light); }
+    #question::placeholder { color: var(--text-dim); }
+
+    #send-btn {
+      background: var(--red);
+      border: none;
+      border-radius: 10px;
+      padding: 0 20px;
+      height: 44px;
+      color: white;
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .2s, transform .1s;
+      flex-shrink: 0;
+    }
+    #send-btn:hover   { background: var(--red-light); }
+    #send-btn:active  { transform: scale(.96); }
+    #send-btn:disabled { background: var(--border); cursor: not-allowed; }
+
+    .options-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: .8rem;
+      color: var(--text-dim);
+    }
+    .topk-wrap { display: flex; align-items: center; gap: 6px; }
+    .topk-wrap select {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 6px;
+      padding: 2px 8px;
+      font-size: .8rem;
+    }
+
+    #status-row { margin-left: auto; display: flex; align-items: center; gap: 7px; }
+    #status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 6px var(--gold);
+    }
+    #status-dot.ready { background: #4caf50; box-shadow: 0 0 6px #4caf50; }
+    #status-dot.error { background: var(--red-light); box-shadow: 0 0 6px var(--red-light); }
+
+    /* ── QUICK QUESTIONS ── */
+    .quick-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+    .quick-q {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 13px;
+      font-size: .76rem;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .quick-q:hover { border-color: var(--red-light); color: var(--text); }
+
+    /* ── MAIN CONTENT ── */
+    main {
+      flex: 1;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* ── LEGEND TABLE ── */
+    .legend {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      max-width: 560px;
+    }
+    .legend-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: .8rem;
+    }
+    .legend-label {
+      font-size: 1rem;
+      font-weight: 800;
+      min-width: 22px;
+    }
+    .lA { color: var(--col-A); }
+    .lB { color: var(--col-B); }
+    .lC { color: var(--col-C); }
+    .lD { color: var(--col-D); }
+
+    .legend-desc { color: var(--text-dim); line-height: 1.4; }
+    .legend-desc strong { color: var(--text); }
+
+    /* ── RESULTS GRID 2×2 ── */
+    .results-section { display: flex; flex-direction: column; gap: 12px; }
+    .results-section h2 {
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      color: var(--text-dim);
+    }
+
+    .grid-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 700px) {
+      .grid-2x2 { grid-template-columns: 1fr; }
+    }
+
+    .result-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: border-color .2s;
+    }
+    .result-card.unavailable { opacity: .5; }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .card-label {
+      font-size: 1.3rem;
+      font-weight: 900;
+      min-width: 26px;
+    }
+    .card-meta { flex: 1; }
+    .card-meta .model-name { font-size: .82rem; font-weight: 600; }
+    .card-meta .rag-tag {
+      display: inline-block;
+      font-size: .66rem;
+      border-radius: 10px;
+      padding: 1px 7px;
+      margin-top: 2px;
+      font-weight: 600;
+      letter-spacing: .3px;
+    }
+    .rag-on  { background: rgba(67,160,71,.2); color: #81c784; border: 1px solid #2e7d32; }
+    .rag-off { background: rgba(144,164,174,.1); color: var(--text-dim); border: 1px solid var(--border); }
+
+    .card-time {
+      font-size: .72rem;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+
+    .card-body {
+      padding: 14px;
+      font-size: .875rem;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-word;
+      flex: 1;
+      color: var(--text);
+    }
+
+    /* skeleton loading */
+    .skeleton {
+      background: linear-gradient(90deg, var(--surface2) 25%, var(--border) 50%, var(--surface2) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 6px;
+      height: 14px;
+      margin-bottom: 8px;
+    }
+    .skeleton:last-child { width: 60%; }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+    /* ── RAG SOURCES ── */
+    .sources-section { display: flex; flex-direction: column; gap: 8px; }
+    .sources-section h2 {
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      color: var(--text-dim);
+    }
+    .sources-list { display: flex; flex-direction: column; gap: 6px; }
+    .source-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--gold);
+      border-radius: 8px;
+      padding: 9px 13px;
+      font-size: .78rem;
+    }
+    .source-card .s-title { font-weight: 600; color: var(--gold); margin-bottom: 3px; }
+    .source-card .s-preview {
+      color: var(--text-dim); line-height: 1.5;
+      display: -webkit-box; -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .source-card .s-score { font-size: .68rem; color: var(--text-dim); margin-top: 3px; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center;
+      color: var(--text-dim);
+      padding: 60px 20px;
+    }
+    .empty-state .icon { font-size: 3.5rem; margin-bottom: 14px; }
+    .empty-state h2 { font-size: 1.1rem; color: var(--text); margin-bottom: 8px; }
+    .empty-state p  { font-size: .85rem; line-height: 1.7; max-width: 440px; margin: 0 auto; }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="flag">🇻🇳</div>
+  <div>
+    <h1>Trợ Lý Luật Giao Thông Việt Nam — So sánh 4 cấu hình</h1>
+    <p>Gemma 2 2B IT · QLoRA · RAG · vietnamese-bi-encoder</p>
+  </div>
+  <div class="badge">A · B · C · D</div>
+</header>
+
+<!-- INPUT -->
+<div class="input-section">
+  <div class="input-row">
+    <textarea id="question" placeholder="Nhập câu hỏi về luật giao thông..." rows="1"></textarea>
+    <button id="send-btn" onclick="sendQuestion()" disabled>▶ So sánh 4 cấu hình</button>
+  </div>
+  <div class="options-row">
+    <div class="topk-wrap">
+      📚 RAG top-k:
+      <select id="topk-select">
+        <option value="2">2 chunks</option>
+        <option value="3" selected>3 chunks</option>
+        <option value="5">5 chunks</option>
+      </select>
+    </div>
+    <div id="status-row">
+      <div id="status-dot"></div>
+      <span id="status-label">Đang tải model...</span>
+    </div>
+  </div>
+  <div class="quick-wrap">
+    <div class="quick-q" onclick="fill(this)">Vượt đèn đỏ xe máy phạt bao nhiêu?</div>
+    <div class="quick-q" onclick="fill(this)">GPLX bị trừ mấy điểm thì thu hồi?</div>
+    <div class="quick-q" onclick="fill(this)">Uống rượu lái xe bị xử phạt thế nào?</div>
+    <div class="quick-q" onclick="fill(this)">Không đội mũ bảo hiểm bị phạt bao nhiêu?</div>
+    <div class="quick-q" onclick="fill(this)">Ô tô chạy quá tốc độ bị phạt ra sao?</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main id="main">
+  <div class="empty-state">
+    <div class="icon">⚖️</div>
+    <h2>Nhập câu hỏi để so sánh 4 cấu hình</h2>
+    <p>Mỗi câu hỏi sẽ được chạy song song qua 4 cấu hình để bạn dễ dàng đánh giá hiệu quả của RAG và fine-tuning.</p>
+  </div>
+</main>
+
+<script>
+const questionEl  = document.getElementById('question');
+const sendBtn     = document.getElementById('send-btn');
+const statusDot   = document.getElementById('status-dot');
+const statusLabel = document.getElementById('status-label');
+const mainEl      = document.getElementById('main');
+let loading = false;
+
+// colours per label
+const COLORS = { A: 'var(--col-A)', B: 'var(--col-B)', C: 'var(--col-C)', D: 'var(--col-D)' };
+
+// auto-resize textarea
+questionEl.addEventListener('input', () => {
+  questionEl.style.height = 'auto';
+  questionEl.style.height = Math.min(questionEl.scrollHeight, 120) + 'px';
+});
+questionEl.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (!sendBtn.disabled) sendQuestion(); }
+});
+
+function fill(el) { questionEl.value = el.textContent; questionEl.style.height = 'auto'; questionEl.focus(); }
+
+// health check
+async function checkHealth() {
+  try {
+    const r = await fetch('/health');
+    const d = await r.json();
+    if (d.ready) {
+      statusDot.className = 'ready';
+      const ft = d.ft_model_loaded ? '✅ Fine-tuned' : '⚠️ Base only';
+      statusLabel.textContent = `Sẵn sàng · ${d.faiss_vectors} vectors · ${ft}`;
+      sendBtn.disabled = false;
+    } else { setTimeout(checkHealth, 3000); }
+  } catch { statusDot.className = 'error'; statusLabel.textContent = 'Lỗi kết nối'; setTimeout(checkHealth, 5000); }
+}
+checkHealth();
+
+function makeSkeleton() {
+  return `<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton" style="width:75%"></div><div class="skeleton"></div>`;
+}
+
+function renderGrid(skeletons = false) {
+  const configs = [
+    { label:'A', modelType:'LLM gốc',        useRag:false },
+    { label:'B', modelType:'LLM gốc',        useRag:true  },
+    { label:'C', modelType:'LLM fine-tuned', useRag:false },
+    { label:'D', modelType:'LLM fine-tuned', useRag:true  },
+  ];
+
+  const cards = configs.map(c => {
+    const ragTag = c.useRag
+      ? '<span class="rag-tag rag-on">✦ Có RAG</span>'
+      : '<span class="rag-tag rag-off">Không RAG</span>';
+
+    return `
+      <div class="result-card" id="card-${c.label}">
+        <div class="card-header">
+          <div class="card-label l${c.label}" style="color:${COLORS[c.label]}">${c.label}</div>
+          <div class="card-meta">
+            <div class="model-name">${c.modelType}</div>
+            ${ragTag}
+          </div>
+          <div class="card-time" id="time-${c.label}"></div>
+        </div>
+        <div class="card-body" id="body-${c.label}">
+          ${skeletons ? makeSkeleton() : '<span style="color:var(--text-dim);font-size:.82rem">—</span>'}
+        </div>
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="results-section">
+      <h2>📊 Kết quả so sánh</h2>
+      <div class="grid-2x2">${cards}</div>
+    </div>`;
+}
+
+function renderSources(sources, context) {
+  if (!sources || sources.length === 0) return '';
+  const cards = sources.map(s => `
+    <div class="source-card">
+      <div class="s-title">${s.title}</div>
+      <div class="s-preview">${s.text_preview}</div>
+      <div class="s-score">Điểm liên quan: ${s.score.toFixed(3)}</div>
+    </div>`).join('');
+
+  return `
+    <div class="sources-section">
+      <h2>📚 RAG Chunks dùng cho cấu hình B &amp; D (top ${sources.length})</h2>
+      <div class="sources-list">${cards}</div>
+    </div>`;
+}
+
+async function sendQuestion() {
+  const q = questionEl.value.trim();
+  if (!q || loading) return;
+
+  loading = true;
+  sendBtn.disabled = true;
+  sendBtn.textContent = '⏳ Đang chạy...';
+
+  // render skeleton ngay lập tức
+  mainEl.innerHTML = `
+    <div style="font-size:.82rem;color:var(--text-dim);margin-bottom:4px">
+      ❓ <strong style="color:var(--text)">${q}</strong>
+    </div>
+    ${renderGrid(true)}
+  `;
+
+  try {
+    const res = await fetch('/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: q, top_k: parseInt(document.getElementById('topk-select').value) }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      mainEl.innerHTML = `<div style="color:var(--red-light);padding:20px">❌ Lỗi: ${err.detail || res.statusText}</div>`;
+      return;
+    }
+
+    const data = await res.json();
+
+    // điền kết quả vào từng card
+    data.results.forEach(r => {
+      const bodyEl = document.getElementById(`body-${r.label}`);
+      const timeEl = document.getElementById(`time-${r.label}`);
+      const cardEl = document.getElementById(`card-${r.label}`);
+
+      if (bodyEl) {
+        if (!r.available) {
+          bodyEl.innerHTML = `<span style="color:var(--red-light)">${r.answer}</span>`;
+          if (cardEl) cardEl.classList.add('unavailable');
+        } else {
+          bodyEl.textContent = r.answer;
+        }
+      }
+      if (timeEl && r.elapsed > 0) timeEl.textContent = `${r.elapsed}s`;
+    });
+
+    // thêm sources bên dưới grid
+    const sourcesHtml = renderSources(data.sources);
+    if (sourcesHtml) {
+      const resultsSection = mainEl.querySelector('.results-section');
+      if (resultsSection) resultsSection.insertAdjacentHTML('afterend', sourcesHtml);
+    }
+
+  } catch (err) {
+    mainEl.innerHTML = `<div style="color:var(--red-light);padding:20px">❌ Lỗi kết nối: ${err.message}</div>`;
+  } finally {
+    loading = false;
+    sendBtn.disabled = false;
+    sendBtn.textContent = '▶ So sánh 4 cấu hình';
+  }
+}
+</script>
+</body>
+</html>

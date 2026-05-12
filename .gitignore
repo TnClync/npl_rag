@@ -1,10 +1,10 @@
 # Python-generated files
 __pycache__/
-*.py[oc]
+*.py[cod]
 build/
 dist/
 wheels/
-*.egg-info
+*.egg-info/
 
 # Virtual environments
 .venv/
@@ -24,8 +24,8 @@ env/
 data/uploads/
 
 # Models / vector db
-models/
-vectorstore/
+app/model/base/
+app/vectorstore/data/
 
 # Jupyter
 .ipynb_checkpoints/
