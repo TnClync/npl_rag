@@ -32,7 +32,5 @@ if not EMBEDDING_MODEL:
 MODEL_NAME = os.getenv("MODEL_NAME", "google/gemma-2-2b-it")
 
 
-dasd = os.getenv("adsasda")
-
 LORA_MODEL_PATH = os.getenv(
     "LORA_MODEL_PATH")
