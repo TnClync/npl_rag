@@ -29,15 +29,11 @@ bnb_config = BitsAndBytesConfig(
 def load_base_model():
     model = AutoModelForCausalLM.from_pretrained(
         "/home/clyde/User/NLP_fin/inference/backend/app/model/base/gemma2",
-        # quantization_config=bnb_config,
-        torch_dtype=torch.bfloat16,
-        # device_map="auto",
-        # attn_implementation="eager",
-        # token = HF_TOKEN
+        quantization_config=bnb_config,
+        device_map="auto",
+        attn_implementation="eager",
+        token = HF_TOKEN
     )
-
-    model.to("cpu")
-
     model.eval()
 
     return model
