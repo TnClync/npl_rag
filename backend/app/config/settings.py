@@ -35,6 +35,4 @@ MODEL_NAME = os.getenv("MODEL_NAME", "google/gemma-2-2b-it")
 HF_TOKEN = os.getenv("HF_TOKEN","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")
 
 LORA_MODEL_PATH = os.getenv(
-    "LORA_MODEL_PATH",
-    "app/vectorstore/data/traffic_law_qa/lora_adapter"
-)
+    "LORA_MODEL_PATH")

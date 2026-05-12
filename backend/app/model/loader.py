@@ -10,7 +10,7 @@ import os
 # =========================
 from config.settings import MODEL_NAME, HF_TOKEN, LORA_MODEL_PATH, TOP_K, FAISS_PATH, CHUNKS_PATH
 from vectorstore.retriever import TrafficLawRetriever
-# from vectorstore.embedding_model import embedding_model
+from vectorstore.embedding_model import embedding_model
 
 
 # =========================
@@ -28,20 +28,26 @@ bnb_config = BitsAndBytesConfig(
 # =========================
 def load_base_model():
     model = AutoModelForCausalLM.from_pretrained(
-        MODEL_NAME,
-        quantization_config=bnb_config,
-        device_map="auto",
-        attn_implementation="eager",
-        token = HF_TOKEN
+        "/home/clyde/User/NLP_fin/inference/backend/app/model/base/gemma2",
+        # quantization_config=bnb_config,
+        torch_dtype=torch.bfloat16,
+        # device_map="auto",
+        # attn_implementation="eager",
+        # token = HF_TOKEN
     )
+
+    model.to("cpu")
+
+    model.eval()
+
     return model
 
 # =========================
 # LOAD TOKENIZER
 # =========================
 def load_tokenizer():
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-    tokenizer.pad_token = tokenizer.eos_token
+    tokenizer = AutoTokenizer.from_pretrained("/home/clyde/User/NLP_fin/inference/backend/app/model/base/gemma2", local_files_only=True)
+    tokenizer.padding_side = "right"
     return tokenizer
 
 # =========================

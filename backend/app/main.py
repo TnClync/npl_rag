@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from app.config.settings import APP_NAME
-from app.api.routes import healthy
+from app.api.routes import healthy , chat
 
 load_dotenv()
 
@@ -16,7 +16,7 @@ app = FastAPI(
 )
 
 app.include_router(healthy.router)
-
+app.include_router(chat.router)
 # =========================
 # CORS
 # =========================
@@ -41,3 +41,5 @@ app.mount(
     StaticFiles(directory="../frontend", html=True),
     name="frontend"
 )
+
+
