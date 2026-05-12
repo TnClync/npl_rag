@@ -32,7 +32,7 @@ if not EMBEDDING_MODEL:
 MODEL_NAME = os.getenv("MODEL_NAME", "google/gemma-2-2b-it")
 
 
-HF_TOKEN = os.getenv("HF_TOKEN","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")
+HF_TOKEN = os.getenv("HF_TOKEN")
 
 LORA_MODEL_PATH = os.getenv(
     "LORA_MODEL_PATH")
